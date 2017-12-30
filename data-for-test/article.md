@@ -1,5 +1,6 @@
 ---
 publication date: 2017-12-27
+slug: this-is-the-slug
 ---
 
 # This is the title

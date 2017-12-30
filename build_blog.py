@@ -1,6 +1,7 @@
 import re
 from types import SimpleNamespace
 import unicodedata
+import os
 
 import yaml
 import markdown
@@ -30,12 +31,20 @@ def extract_article_data(source):
 def render_markdown(text):
     return markdown.markdown(text)
 
-def build_article(title, body):
+def render_article(title, body):
     env = Environment(
         loader=FileSystemLoader('templates'),
     )
     template = env.get_template('article.html')
     return template.render(title=title, body=body)
+
+def render_index(article_list):
+    # XXX environment could be created once
+    env = Environment(
+        loader=FileSystemLoader('templates'),
+    )
+    template = env.get_template('index.html')
+    return template.render(article_list=article_list)
 
 # from https://stackoverflow.com/a/517974/3025740
 def remove_accents(input_str):
@@ -47,10 +56,41 @@ def slugify(x):
     xxx = remove_accents(xx)
     return xxx.lower()
 
-with open('data-for-test/article.md') as f:
-    source = f.read()
+def build_page(path_to_source):
+    with open(path_to_source) as f:
+        source = f.read()
 
-article = extract_article_data(source)
-body = render_markdown(article.text)
-page = build_article(article.title, body)
-slug = slugify(article.title)
+    article = extract_article_data(source)
+    body = render_markdown(article.text)
+    page = render_article(article.title, body)
+    if "slug" in article.metadata:
+        slug = article.metadata["slug"]
+    else:
+        slug = slugify(article.title)
+    article.filename = str(article.pub_date) + '-' + slug + '.html'
+    article.href = article.filename
+
+    return (page, article)
+
+def remove_all_html_files(path_to_dir):
+    for name in os.listdir(path_to_dir):
+        if name.endswith('.html'):
+            os.remove(path_to_dir+'/'+name)
+            
+
+def build_blog(path_to_sources, path_to_destination):
+    if not os.path.isdir(path_to_sources):
+        raise Exception('not a directory: "%s"' % path_to_sources)
+    
+    remove_all_html_files(path_to_destination)
+
+    article_list = list()
+    for source_file in os.listdir(path_to_sources):
+        page, article = build_page(path_to_sources+'/'+source_file)
+        article_list.append(article)
+        with open(path_to_destination+'/'+article.filename, 'w') as f:
+            f.write(page)
+
+    index = render_index(article_list)
+    with open(path_to_destination+'/'+'index.html', 'w') as f:
+        f.write(index)
