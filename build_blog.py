@@ -44,6 +44,7 @@ def render_index(article_list):
         loader=FileSystemLoader('templates'),
     )
     template = env.get_template('index.html')
+    article_list.sort(key = lambda x:x.pub_date, reverse=True)
     return template.render(article_list=article_list)
 
 # from https://stackoverflow.com/a/517974/3025740
