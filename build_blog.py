@@ -8,8 +8,8 @@ import markdown
 import jinja2
 from jinja2 import Environment, FileSystemLoader
 
-PATH_TO_SOURCE = "/home/cedric/repos/blog"
-PATH_TO_BUILD = "/home/cedric/repos/cedricvanrompay.github.io/blog"
+PATH_TO_SOURCE = "/home/cedricvr/Dropbox/writing/blog/content"
+PATH_TO_BUILD = "/home/cedricvr/repos/cedricvanrompay.github.io/blog"
 
 # from https://github.com/waylan/docdata/blob/master/docdata/yamldata.py
 METADATA_RE = re.compile(r'^-{3}[ \t]*\n(.*?\n)(?:\.{3}|-{3})[ \t]*\n', re.UNICODE|re.DOTALL)
