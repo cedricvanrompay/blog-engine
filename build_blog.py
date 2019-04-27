@@ -31,12 +31,12 @@ def extract_article_data(source):
 def render_markdown(text):
     return markdown.markdown(text)
 
-def render_article(title, body, pub_date):
+def render_article(title, body, pub_date, metadata):
     env = Environment(
         loader=FileSystemLoader('templates'),
     )
     template = env.get_template('article.html')
-    return template.render(title=title, body=body, pub_date=pub_date)
+    return template.render(title=title, body=body, pub_date=pub_date, **metadata)
 
 def render_index(article_list):
     # XXX environment could be created once
@@ -63,7 +63,7 @@ def build_page(path_to_source):
 
     article = extract_article_data(source)
     body = render_markdown(article.text)
-    page = render_article(article.title, body, article.pub_date)
+    page = render_article(article.title, body, article.pub_date, article.metadata)
     if "slug" in article.metadata:
         slug = article.metadata["slug"]
     else:
