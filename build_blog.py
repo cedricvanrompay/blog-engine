@@ -95,3 +95,6 @@ def build_blog(path_to_sources, path_to_destination):
     index = render_index(article_list)
     with open(path_to_destination+'/'+'index.html', 'w') as f:
         f.write(index)
+
+if __name__ == "__main__":
+    build_blog(PATH_TO_SOURCE, PATH_TO_BUILD)
