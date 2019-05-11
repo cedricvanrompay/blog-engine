@@ -8,8 +8,7 @@ import markdown
 import jinja2
 from jinja2 import Environment, FileSystemLoader
 
-PATH_TO_SOURCE = "/home/cedricvr/Dropbox/writing/blog/content"
-PATH_TO_BUILD = "/home/cedricvr/repos/cedricvanrompay.github.io/blog"
+PATH_TO_CONFIG = './config.yaml'
 
 # from https://github.com/waylan/docdata/blob/master/docdata/yamldata.py
 METADATA_RE = re.compile(r'^-{3}[ \t]*\n(.*?\n)(?:\.{3}|-{3})[ \t]*\n', re.UNICODE|re.DOTALL)
@@ -96,5 +95,15 @@ def build_blog(path_to_sources, path_to_destination):
     with open(path_to_destination+'/'+'index.html', 'w') as f:
         f.write(index)
 
+def get_config(path_to_config):
+    with open(path_to_config) as f:
+        config = dict()
+        for line in f:
+            (k, v) = line.strip().split(': ')
+            config[k] = v
+    return config
+
 if __name__ == "__main__":
-    build_blog(PATH_TO_SOURCE, PATH_TO_BUILD)
+    config = get_config(PATH_TO_CONFIG)
+    build_blog(config['path_to_source'], config['path_to_build'])
+
